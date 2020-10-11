@@ -1,0 +1,49 @@
+---
+version: '3.8'
+services:
+
+   webcheckr:
+    image: x0rzkov/webcheckr:latest
+    container_name: ${NAMESPACE}-cli
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ${PWD}/shared:/webcheckr/shared
+    user: ${WEBCHECKR_USER}
+    group-add: ${WEBCHECKR_ADD_GROUP}
+    depends_on:
+    - wpscan
+    - wappalyzer
+    - gobuster
+    - joomscan
+    - selenium
+    - cve-search
+    networks:
+    - webcheckr
+    - web
+
+   wpscan:
+    image: wpscanteam/wpscan:latest
+
+   wappalyzer:
+    image: wappalyzer/cli:latest
+
+   gobuster:
+    image: kodisha/gobuster:latest
+
+   joomscan:
+    image: pgrund/joomscan:latest
+
+   selenium:
+    image: selenium/standalone-chrome:latest
+
+   cve-search:
+    image: ttimasdf/cve-search:withdb
+
+networks:
+  webcheckr:
+    driver: bridge
+  web:
+    external: true
